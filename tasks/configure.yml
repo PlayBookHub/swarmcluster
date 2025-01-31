@@ -1,0 +1,38 @@
+
+    - name: Run write hosts-1
+      ansible.builtin.shell:  echo "192.168.19.91 master.redfex.loc master" >> /etc/hosts
+    - name: Run write hosts-2
+      ansible.builtin.shell:  echo "192.168.19.92 worker1.redfex.loc worker1" >> /etc/hosts
+    - name: Run write hosts-3
+      ansible.builtin.shell:  echo "192.168.19.93 worker2.redfex.loc worker2" >> /etc/hosts
+    - name: Run write hosts-4
+      ansible.builtin.shell:  echo "192.168.19.94 worker3.redfex.loc worker3" >> /etc/hosts
+    - name: Allow all access to tcp port 2376
+      community.general.ufw:
+        rule: allow
+        port: '2376'
+        proto: tcp
+    - name: Allow all access to tcp port 7946
+      community.general.ufw:
+        rule: allow
+        port: '7946'
+        proto: tcp
+    - name: Allow all access to tcp port 7946
+      community.general.ufw:
+        rule: allow
+        port: '7946'
+        proto: udp
+    - name: Allow all access to tcp port 7946
+      community.general.ufw:
+        rule: allow
+        port: '4789'
+        proto: udp
+    - name: Allow all access to tcp port 2376
+      community.general.ufw:
+        rule: allow
+        port: '2377'
+        proto: tcp
+      delegate_to: master
+    - name: Create work dir
+      ansible.builtin.shell: mkdir -p /opt/{{ dir_path }}
+       

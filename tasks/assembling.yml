@@ -1,0 +1,21 @@
+--- 
+- name: Docker swarm cluster init
+  command: docker swarm init --advertise-addr {{ manager }}
+  ignore_errors: yes
+  delegate_to: master
+- name: Get worker token
+  command: docker swarm join-token worker -q
+  changed_when: False
+  register: swarm_worker_token
+  delegate_to: master
+- name: Add nodes swarm cluster
+  shell: docker swarm join --token "{{ swarm_worker_token.stdout }}" {{ manager }}:{{ port }}
+  ignore_errors: yes
+- name: Check cluster
+  ansible.builtin.shell: docker node ls
+  register: check_cluster
+  delegate_to: master
+- name: Write check cluster
+  ansible.builtin.debug:
+    var: check_cluster.stdout_lines
+  delegate_to: master

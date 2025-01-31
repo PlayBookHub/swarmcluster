@@ -1,0 +1,19 @@
+---
+- name: Create folder
+  ansible.builtin.shell: mkdir -p /opt/service/portains
+- name: Copy docker compouse Portainer
+  ansible.builtin.copy:
+    src: portainer-agent-stack.yml
+    dest: /opt/service/portains/portainer-agent-stack.yml
+- name: Running portainer docker swarm cluser
+  ansible.builtin.shell: docker stack deploy -c /opt/service/portains/portainer-agent-stack.yml portainer
+  ignore_errors: yes
+  delegate_to: master
+- name: Check running portainer
+  ansible.builtin.shell: docker stack ls
+  register: check_portainer
+  delegate_to: master
+- name: Write check cluster
+  ansible.builtin.debug:
+    var: check_portainer.stdout_lines
+  delegate_to: master
